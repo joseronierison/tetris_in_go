@@ -3,14 +3,11 @@ package game
 import (
 	"fmt"
 	"os"
-	"tetris/screens"
-	gameboard "tetris/screens/gameBoard"
-	"tetris/screens/menu"
 
 	"github.com/nsf/termbox-go"
 )
 
-func Start(ss *screens.ScreenState) {
+func Start(ss *ScreenState) {
 	err := termbox.Init()
 	termbox.SetInputMode(termbox.InputEsc)
 
@@ -21,14 +18,15 @@ func Start(ss *screens.ScreenState) {
 
 	defer termbox.Close()
 
+mainloop:
 	for {
 		switch ss.GetCurrentScreen() {
-		case screens.MainMenuScreen:
-			menu.Init()
-		case screens.GameScreen:
-			gameboard.Init()
-		case "exit":
-			return
+		case MainMenuScreen:
+			InitMenu(ss)
+		case GameScreen:
+			InitGameBoard(ss)
+		case Exit:
+			break mainloop
 		}
 	}
 }

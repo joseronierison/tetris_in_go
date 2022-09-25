@@ -1,7 +1,8 @@
-package screens
+package game
 
 const MainMenuScreen = "main_menu"
 const GameScreen = "game"
+const Exit = "exit"
 
 var SS = ScreenState{currentScreen: MainMenuScreen}
 
@@ -15,6 +16,10 @@ func (ss *ScreenState) GoToMainMenu() {
 
 func (ss *ScreenState) GoToGame() {
 	ss.currentScreen = GameScreen
+}
+
+func (ss *ScreenState) Exit() {
+	ss.currentScreen = Exit
 }
 
 func (ss *ScreenState) GetCurrentScreen() string {

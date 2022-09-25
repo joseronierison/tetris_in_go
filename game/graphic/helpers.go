@@ -15,10 +15,10 @@ func WriteText(x, y int, fg, bg termbox.Attribute, msg string) {
 }
 
 func GetScreenSize() (width, height int) {
-	return termbox.Size()
+	return 75, 30
 }
 
-func DrawBorders() {
+func DrawExternalBoarders() {
 	const coldef = termbox.ColorDefault
 	w, h := GetScreenSize()
 
@@ -30,7 +30,14 @@ func DrawRectangle(x, y, width, height int, color termbox.Attribute) {
 	drawContinuously(x+width-1, y, 1, height, termbox.Cell{Ch: ' ', Bg: color}) //right
 	drawContinuously(x, y+height-1, width, 1, termbox.Cell{Ch: ' ', Bg: color}) //bottom
 	drawContinuously(x, y, 1, height, termbox.Cell{Ch: ' ', Bg: color})         //left
+}
 
+func DrawVerticalLine(x, y, size int, color termbox.Attribute) {
+	drawContinuously(x, y, 1, size, termbox.Cell{Ch: ' ', Bg: color})
+}
+
+func DrawHorizontalLine(x, y, size int, color termbox.Attribute) {
+	drawContinuously(x, y, size, 1, termbox.Cell{Ch: ' ', Bg: color})
 }
 
 func drawContinuously(x, y, w, h int, cell termbox.Cell) {
