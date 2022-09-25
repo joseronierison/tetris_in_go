@@ -1,7 +1,6 @@
 package game
 
 import (
-	"sync"
 	"tetris/game/graphic"
 
 	"github.com/nsf/termbox-go"
@@ -11,7 +10,8 @@ var menuState = 0
 
 func InitMenu(ss *ScreenState) {
 	drawMenu()
-	go drawAnimation()
+	ch := make(chan bool)
+	go drawAnimation(ch)
 
 menuloop:
 	for {
@@ -32,6 +32,7 @@ menuloop:
 			case termbox.KeyEnter:
 				switch menuState {
 				case 0:
+					close(ch)
 					ss.GoToGame()
 					break menuloop
 				case 1:
@@ -85,7 +86,7 @@ func drawMenu() {
 	termbox.Flush()
 }
 
-func drawAnimation() {
+func drawAnimation(ch chan bool) {
 	var doa = graphic.DrawableAtom{Char: ' ', Fg: termbox.ColorDefault, Bg: termbox.ColorGreen}
 	var eao = graphic.DrawableAtom{Char: ' ', Fg: termbox.ColorDefault, Bg: termbox.ColorDefault}
 
@@ -99,42 +100,11 @@ func drawAnimation() {
 	var rightOrigin = graphic.Cordinates{X: 65, Y: 2}
 	var leftOrigin = graphic.Cordinates{X: 59, Y: 2}
 	var baseSteps = 19
-	var wg sync.WaitGroup
 
-	wg.Add(1)
-	go func() {
-		sObject.MoveObjectVertically(rightOrigin, baseSteps)
-		defer wg.Done()
-	}()
-	wg.Wait()
-	wg.Add(1)
-
-	go func() {
-		iObject.MoveObjectVertically(leftOrigin, baseSteps)
-		defer wg.Done()
-	}()
-
-	wg.Wait()
-	wg.Add(1)
-	go func() {
-		rObject.MoveObjectVertically(rightOrigin, baseSteps-6)
-		defer wg.Done()
-	}()
-
-	wg.Wait()
-	wg.Add(1)
-	go func() {
-		t2Object.MoveObjectVertically(leftOrigin, baseSteps-6)
-		defer wg.Done()
-	}()
-
-	wg.Wait()
-	wg.Add(1)
-	go func() {
-		eObject.MoveObjectVertically(rightOrigin, baseSteps-12)
-		defer wg.Done()
-	}()
-
-	wg.Wait()
-	t1Object.MoveObjectVertically(leftOrigin, baseSteps-12)
+	sObject.MoveObjectVertically(rightOrigin, baseSteps, ch)
+	iObject.MoveObjectVertically(leftOrigin, baseSteps, ch)
+	rObject.MoveObjectVertically(rightOrigin, baseSteps-6, ch)
+	t2Object.MoveObjectVertically(leftOrigin, baseSteps-6, ch)
+	eObject.MoveObjectVertically(rightOrigin, baseSteps-12, ch)
+	t1Object.MoveObjectVertically(leftOrigin, baseSteps-12, ch)
 }

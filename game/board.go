@@ -11,6 +11,8 @@ import (
 var letters = []rune{'r', 'o', 'n', 'i'}
 
 func InitGameBoard(ss *ScreenState) {
+	termbox.Init()
+	termbox.SetInputMode(termbox.InputEsc)
 	go someThreadTest()
 
 	for {

@@ -44,29 +44,33 @@ func (obj DrawableObject) ClearObject(coord Cordinates) {
 	}
 }
 
-func (obj DrawableObject) MoveObjectVertically(origin Cordinates, steps int) {
+func (obj DrawableObject) MoveObjectVertically(origin Cordinates, steps int, ch chan bool) {
 	obj.isMoving = true
-	ticker := time.NewTicker(time.Millisecond * 500)
+	ticker := time.NewTicker(time.Millisecond * 50)
 	defer ticker.Stop()
 
 	stepsTaken := 0
 
 	for {
-		if stepsTaken == 0 {
-			obj.DrawObject(origin)
-			stepsTaken += 1
-		} else if origin.Y+stepsTaken <= steps {
-			lastCoordinates := Cordinates{X: origin.X, Y: origin.Y + stepsTaken - 1}
-			newCoordinates := Cordinates{X: origin.X, Y: origin.Y + stepsTaken}
-			obj.ClearObject(lastCoordinates)
-			obj.DrawObject(newCoordinates)
-			stepsTaken += 1
+		select {
+		case <-ch:
+			return
+		default:
+			if stepsTaken == 0 {
+				obj.DrawObject(origin)
+				stepsTaken += 1
+			} else if origin.Y+stepsTaken <= steps {
+				lastCoordinates := Cordinates{X: origin.X, Y: origin.Y + stepsTaken - 1}
+				newCoordinates := Cordinates{X: origin.X, Y: origin.Y + stepsTaken}
+				obj.ClearObject(lastCoordinates)
+				obj.DrawObject(newCoordinates)
+				stepsTaken += 1
 
-		} else if origin.Y+stepsTaken > steps {
-			obj.isMoving = false
-			break
+			} else if origin.Y+stepsTaken > steps {
+				obj.isMoving = false
+				return
+			}
 		}
-
 		termbox.Flush()
 		<-ticker.C
 	}
