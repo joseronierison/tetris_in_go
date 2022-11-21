@@ -8,7 +8,8 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-func Start(ss *screens.ScreenState) {
+func Start() {
+	ss := &screens.SS
 	err := termbox.Init()
 	termbox.SetInputMode(termbox.InputEsc)
 

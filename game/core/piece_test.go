@@ -57,8 +57,6 @@ func TestPieceRotationsInATFallingPiece(t *testing.T) {
 	assert.Equal(t, 3, pieceT.width)
 	assert.Equal(t, 2, pieceT.height)
 	assertBoardStateWithAT(t, board.fields, pieceT.x, pieceT.y)
-
-	printBoardFields(board.fields)
 }
 
 func TestPieceRotationsInALFallingPiece(t *testing.T) {
@@ -105,8 +103,6 @@ func TestPieceRotationsInALFallingPiece(t *testing.T) {
 	assert.Equal(t, 3, pieceL.width)
 	assert.Equal(t, 3, pieceL.height)
 	assertBoardStateWithAnL(t, board.fields, pieceL.x, pieceL.y)
-
-	printBoardFields(board.fields)
 }
 
 func TestPieceRotationsInAIFallingPiece(t *testing.T) {
@@ -145,8 +141,6 @@ func TestPieceRotationsInAIFallingPiece(t *testing.T) {
 	assert.Equal(t, 1, pieceI.width)
 	assert.Equal(t, 3, pieceI.height)
 	assertBoardStateWithAI(t, board.fields, pieceI.x, pieceI.y)
-
-	printBoardFields(board.fields)
 }
 
 func TestPieceRotationWhenItIsNotFailing(t *testing.T) {

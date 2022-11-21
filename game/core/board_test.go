@@ -105,7 +105,6 @@ func TestThatFallingPieceGoesTilTheGroundAfterBeenRotated(t *testing.T) {
 		board.Tick()
 	}
 
-	printBoardFields(board.fields)
 	assert.True(t, board.fields[24][27])
 	assert.True(t, board.fields[25][27])
 	assert.True(t, board.fields[26][27])
