@@ -6,7 +6,7 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-type Cordinates struct{ X, Y int }
+type Coordinates struct{ X, Y int }
 
 type DrawableAtom struct {
 	Char rune
@@ -15,19 +15,14 @@ type DrawableAtom struct {
 }
 
 type DrawableObject struct {
-	Atoms    [][]DrawableAtom
-	isMoving bool
+	Atoms [][]DrawableAtom
 }
 
 func (obj DrawableObject) width() int {
 	return len(obj.Atoms)
 }
 
-func (obj DrawableObject) IsMoving() bool {
-	return obj.isMoving
-}
-
-func (obj DrawableObject) DrawObject(coord Cordinates) {
+func (obj DrawableObject) DrawObject(coord Coordinates) {
 	for ly := 0; ly < obj.width(); ly++ {
 		for lx := 0; lx < len(obj.Atoms[ly]); lx++ {
 			atom := obj.Atoms[ly][lx]
@@ -36,7 +31,7 @@ func (obj DrawableObject) DrawObject(coord Cordinates) {
 	}
 }
 
-func (obj DrawableObject) ClearObject(coord Cordinates) {
+func (obj DrawableObject) ClearObject(coord Coordinates) {
 	for ly := 0; ly < obj.width(); ly++ {
 		for lx := 0; lx < len(obj.Atoms[ly]); lx++ {
 			termbox.SetCell(coord.X+lx, coord.Y+ly, ' ', termbox.ColorDefault, termbox.ColorDefault)
@@ -44,8 +39,7 @@ func (obj DrawableObject) ClearObject(coord Cordinates) {
 	}
 }
 
-func (obj DrawableObject) MoveObjectVertically(origin Cordinates, steps int, ch chan bool) {
-	obj.isMoving = true
+func (obj DrawableObject) MoveObjectVertically(origin Coordinates, steps int, ch chan bool) {
 	ticker := time.NewTicker(time.Millisecond * 50)
 	defer ticker.Stop()
 
@@ -60,14 +54,12 @@ func (obj DrawableObject) MoveObjectVertically(origin Cordinates, steps int, ch 
 				obj.DrawObject(origin)
 				stepsTaken += 1
 			} else if origin.Y+stepsTaken <= steps {
-				lastCoordinates := Cordinates{X: origin.X, Y: origin.Y + stepsTaken - 1}
-				newCoordinates := Cordinates{X: origin.X, Y: origin.Y + stepsTaken}
+				lastCoordinates := Coordinates{X: origin.X, Y: origin.Y + stepsTaken - 1}
+				newCoordinates := Coordinates{X: origin.X, Y: origin.Y + stepsTaken}
 				obj.ClearObject(lastCoordinates)
 				obj.DrawObject(newCoordinates)
 				stepsTaken += 1
-
 			} else if origin.Y+stepsTaken > steps {
-				obj.isMoving = false
 				return
 			}
 		}

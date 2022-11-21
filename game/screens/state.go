@@ -1,4 +1,4 @@
-package game
+package screens
 
 const MainMenuScreen = "main_menu"
 const GameScreen = "game"

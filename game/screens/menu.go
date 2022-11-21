@@ -1,4 +1,4 @@
-package game
+package screens
 
 import (
 	"tetris/game/graphic"
@@ -97,8 +97,8 @@ func drawAnimation(ch chan bool) {
 	var iObject = graphic.DrawableObject{Atoms: [][]graphic.DrawableAtom{{doa, doa, doa}, {eao, doa}, {eao, doa}, {eao, doa}, {doa, doa, doa}}}
 	var sObject = graphic.DrawableObject{Atoms: [][]graphic.DrawableAtom{{doa, doa, doa, doa}, {doa}, {doa, doa, doa, doa}, {eao, eao, eao, doa}, {doa, doa, doa, doa}}}
 
-	var rightOrigin = graphic.Cordinates{X: 65, Y: 2}
-	var leftOrigin = graphic.Cordinates{X: 59, Y: 2}
+	var rightOrigin = graphic.Coordinates{X: 65, Y: 2}
+	var leftOrigin = graphic.Coordinates{X: 59, Y: 2}
 	var baseSteps = 19
 
 	sObject.MoveObjectVertically(rightOrigin, baseSteps, ch)
