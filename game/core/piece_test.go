@@ -59,7 +59,7 @@ func TestPieceRotationsInATFallingPiece(t *testing.T) {
 	assertBoardStateWithAT(t, board.fields, pieceT.x, pieceT.y)
 }
 
-func TestPieceRotationsInALFallingPiece(t *testing.T) {
+func TestPieceRotationsInAnLFallingPiece(t *testing.T) {
 	board := NewBoard(pieceL)
 	x := pieceL.x
 	y := pieceL.y
@@ -151,6 +151,96 @@ func TestPieceRotationWhenItIsNotFailing(t *testing.T) {
 
 	assert.Equal(t, errors.New("cannot rotate a stopped piece"), err)
 	assert.Equal(t, 0, rotation)
+}
+
+func TestThatPieceDoesNotRotateWhenTooCloseFromRightBoard(t *testing.T) {
+	board := NewBoard(pieceI)
+	piece := &board.fallingPiece
+
+	for i := 0; i < 22; i++ {
+		piece.moveRight(&board)
+	}
+
+	rotation, err := piece.rotate(&board)
+
+	assert.Equal(t, 0, rotation)
+	assert.Equal(t, errors.New("is impossible to rotate in this position"), err)
+}
+
+func TestThatIPieceDoesNotRotateWhenTooCloseFromOtherPieces(t *testing.T) {
+	board := NewBoard(pieceI)
+	piece := &board.fallingPiece
+
+	for j := 0; j < 28; j++ {
+		board.fields[26][j] = true
+	}
+
+	rotation, err := piece.rotate(&board)
+
+	assert.Equal(t, 0, rotation)
+	assert.Equal(t, errors.New("is impossible to rotate in this position"), err)
+}
+
+func TestThatLPieceDoesNotRotateWhenTooCloseFromOtherPieces(t *testing.T) {
+	board := NewBoard(pieceL)
+	piece := &board.fallingPiece
+
+	for j := 0; j < 28; j++ {
+		board.fields[26][j] = true
+	}
+
+	rotation, err := piece.rotate(&board)
+
+	printBoardFields(board.fields)
+	assert.Equal(t, 0, rotation)
+	assert.Equal(t, errors.New("is impossible to rotate in this position"), err)
+}
+
+func TestThatTPieceDoesNotRotateWhenTooCloseFromOtherPieces(t *testing.T) {
+	board := NewBoard(pieceT)
+	piece := &board.fallingPiece
+
+	for j := 0; j < 28; j++ {
+		board.fields[26][j] = true
+	}
+	piece.rotate(&board)
+	piece.moveRight(&board)
+
+	rotation, err := piece.rotate(&board)
+
+	printBoardFields(board.fields)
+	assert.Equal(t, 90, rotation)
+	assert.Equal(t, errors.New("is impossible to rotate in this position"), err)
+}
+
+func TestThatSPieceDoesNotRotateWhenTooCloseFromOtherPieces(t *testing.T) {
+	board := NewBoard(pieceS)
+	piece := &board.fallingPiece
+
+	for j := 0; j < 28; j++ {
+		board.fields[26][j] = true
+	}
+
+	rotation, err := piece.rotate(&board)
+
+	assert.Equal(t, 90, rotation)
+	assert.Nil(t, err)
+}
+
+func TestThatDotPieceDoesNotRotateWhenTooCloseFromOtherPieces(t *testing.T) {
+	board := NewBoard(pieceDot)
+	piece := &board.fallingPiece
+
+	for j := 0; j < 28; j++ {
+		board.fields[26][j] = true
+	}
+
+	piece.moveRight(&board)
+
+	rotation, err := piece.rotate(&board)
+
+	assert.Equal(t, 90, rotation)
+	assert.Nil(t, err)
 }
 
 func TestThatFallingPieceMovesLeft(t *testing.T) {

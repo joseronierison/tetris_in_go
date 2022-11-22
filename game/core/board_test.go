@@ -233,22 +233,22 @@ func assertBoardStateWithADot(t *testing.T, fields [49][28]bool, x, y int) {
 	}
 }
 
-func printBoardFields(fields [49][28]bool) {
-	for j := 0; j < 28; j++ {
-		var line string = ""
-		for i := 0; i < 49; i++ {
-			var field string
-			if fields[i][j] {
-				field = "1"
-			} else {
-				field = "0"
-			}
+// func printBoardFields(fields [49][28]bool) {
+// 	for j := 0; j < 28; j++ {
+// 		var line string = ""
+// 		for i := 0; i < 49; i++ {
+// 			var field string
+// 			if fields[i][j] {
+// 				field = "1"
+// 			} else {
+// 				field = "0"
+// 			}
 
-			line = line + field
-		}
+// 			line = line + field
+// 		}
 
-		head := fmt.Sprintf("%v -> ", j)
+// 		head := fmt.Sprintf("<- %v", j)
 
-		println(head + line)
-	}
-}
+// 		println(line + head)
+// 	}
+// }

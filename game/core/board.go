@@ -46,6 +46,17 @@ func (board *board) Tick() {
 	board.place(board.fallingPiece)
 }
 
+func (board *board) isFieldOccupied(pieceAtomsPositions []position) bool {
+	for i := 0; i < len(pieceAtomsPositions); i++ {
+		position := pieceAtomsPositions[i]
+		if board.fields[position.x][position.y] {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (board *board) isNextFieldOccupied(boardPiece boardPiece) bool {
 	nextColumn := boardPiece.y + boardPiece.height
 	if nextColumn < len(board.fields[0]) {
@@ -64,75 +75,11 @@ func (board *board) place(boardPiece boardPiece) {
 }
 
 func (board *board) setStateOnBoard(boardPiece boardPiece, state bool) {
-	x := boardPiece.x
-	y := boardPiece.y
+	positions := boardPiece.GetPieceAtomsPositions()
 
-	switch boardPiece.pieceType {
-	case 'T':
-		if boardPiece.rotation == 0 {
-			board.fields[x][y] = state
-			board.fields[x+1][y] = state
-			board.fields[x+1][y+1] = state
-			board.fields[x+2][y] = state
-		} else if boardPiece.rotation == 90 {
-			board.fields[x][y] = state
-			board.fields[x][y+1] = state
-			board.fields[x+1][y+1] = state
-			board.fields[x][y+2] = state
-		} else if boardPiece.rotation == 180 {
-			board.fields[x][y+2] = state
-			board.fields[x+1][y+2] = state
-			board.fields[x+1][y+1] = state
-			board.fields[x+2][y+2] = state
-		} else if boardPiece.rotation == 270 {
-			board.fields[x+2][y] = state
-			board.fields[x+2][y+1] = state
-			board.fields[x+1][y+1] = state
-			board.fields[x+2][y+2] = state
-		}
-	case 'L':
-		if boardPiece.rotation == 0 {
-			board.fields[x][y] = state
-			board.fields[x][y+1] = state
-			board.fields[x][y+2] = state
-			board.fields[x+1][y+2] = state
-			board.fields[x+2][y+2] = state
-		} else if boardPiece.rotation == 90 {
-			board.fields[x][y+2] = state
-			board.fields[x+1][y+2] = state
-			board.fields[x+2][y+2] = state
-			board.fields[x+2][y+1] = state
-			board.fields[x+2][y] = state
-		} else if boardPiece.rotation == 180 {
-			board.fields[x][y] = state
-			board.fields[x+1][y] = state
-			board.fields[x+2][y] = state
-			board.fields[x+2][y+1] = state
-			board.fields[x+2][y+2] = state
-		} else if boardPiece.rotation == 270 {
-			board.fields[x][y] = state
-			board.fields[x+1][y] = state
-			board.fields[x+2][y] = state
-			board.fields[x][y+1] = state
-			board.fields[x][y+2] = state
-		}
-	case 'I':
-		if boardPiece.rotation == 0 || boardPiece.rotation == 180 {
-			board.fields[x][y] = state
-			board.fields[x][y+1] = state
-			board.fields[x][y+2] = state
-		} else if boardPiece.rotation == 90 || boardPiece.rotation == 270 {
-			board.fields[x][y+2] = state
-			board.fields[x+1][y+2] = state
-			board.fields[x+2][y+2] = state
-		}
-	case 'S':
-		board.fields[x][y] = state
-		board.fields[x][y+1] = state
-		board.fields[x+1][y] = state
-		board.fields[x+1][y+1] = state
-	case '.':
-		board.fields[x][y] = state
+	for i := 0; i < len(positions); i++ {
+		position := positions[i]
+		board.fields[position.x][position.y] = state
 	}
 }
 

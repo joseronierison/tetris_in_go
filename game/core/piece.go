@@ -5,6 +5,11 @@ import (
 	"math/rand"
 )
 
+type position struct {
+	x int
+	y int
+}
+
 type boardPiece struct {
 	pieceType rune
 	x         int
@@ -40,6 +45,20 @@ func (piece *boardPiece) rotate(board *board) (int, error) {
 		return piece.rotation, errors.New("cannot rotate a stopped piece")
 	}
 
+	if piece.height+piece.x > 48 {
+		return piece.rotation, errors.New("is impossible to rotate in this position")
+	}
+
+	prospectedPiece := *piece
+	prospectedPiece.rotation = piece.nextRotation()
+
+	intermediateBoard := *board
+	intermediateBoard.remove(*piece)
+
+	if intermediateBoard.isFieldOccupied(prospectedPiece.GetPieceAtomsPositions()) {
+		return piece.rotation, errors.New("is impossible to rotate in this position")
+	}
+
 	board.remove(*piece)
 
 	width := piece.width
@@ -47,16 +66,136 @@ func (piece *boardPiece) rotate(board *board) (int, error) {
 	piece.width = height
 	piece.height = width
 
-	if piece.rotation == 270 {
-		piece.rotation = 0
-		board.place(*piece)
-		return piece.rotation, nil
-	}
-
-	piece.rotation += 90
+	piece.rotation = piece.nextRotation()
 	board.place(*piece)
 
 	return piece.rotation, nil
+}
+
+func (piece *boardPiece) nextRotation() int {
+	if piece.rotation == 270 {
+		return 0
+	}
+
+	return piece.rotation + 90
+}
+
+func (piece *boardPiece) GetPieceAtomsPositions() []position {
+	var pieceAtomsPositions []position
+
+	switch piece.pieceType {
+	case 'T':
+		pieceAtomsPositions = piece.getTPieceAtomsPositions()
+	case 'L':
+		pieceAtomsPositions = piece.getLPieceAtomsPositions()
+	case 'I':
+		pieceAtomsPositions = piece.getIPieceAtomsPositions()
+	case 'S':
+		pieceAtomsPositions = piece.getSPieceAtomsPositions()
+	case '.':
+		pieceAtomsPositions = piece.getDotPieceAtomsPositions()
+	}
+
+	return pieceAtomsPositions
+}
+
+func (piece *boardPiece) getTPieceAtomsPositions() []position {
+	if piece.rotation == 90 {
+		return []position{
+			{x: piece.x, y: piece.y},
+			{x: piece.x, y: piece.y + 1},
+			{x: piece.x + 1, y: piece.y + 1},
+			{x: piece.x, y: piece.y + 2},
+		}
+	} else if piece.rotation == 180 {
+		return []position{
+			{x: piece.x, y: piece.y + 2},
+			{x: piece.x + 1, y: piece.y + 2},
+			{x: piece.x + 1, y: piece.y + 1},
+			{x: piece.x + 2, y: piece.y + 2},
+		}
+	} else if piece.rotation == 270 {
+		return []position{
+			{x: piece.x + 2, y: piece.y},
+			{x: piece.x + 2, y: piece.y + 1},
+			{x: piece.x + 1, y: piece.y + 1},
+			{x: piece.x + 2, y: piece.y + 2},
+		}
+	}
+
+	return []position{
+		{x: piece.x, y: piece.y},
+		{x: piece.x + 1, y: piece.y},
+		{x: piece.x + 1, y: piece.y + 1},
+		{x: piece.x + 2, y: piece.y},
+	}
+}
+
+func (piece *boardPiece) getLPieceAtomsPositions() []position {
+	if piece.rotation == 90 {
+		return []position{
+			{x: piece.x, y: piece.y + 2},
+			{x: piece.x + 1, y: piece.y + 2},
+			{x: piece.x + 2, y: piece.y + 2},
+			{x: piece.x + 2, y: piece.y + 1},
+			{x: piece.x + 2, y: piece.y},
+		}
+	} else if piece.rotation == 180 {
+		return []position{
+			{x: piece.x, y: piece.y},
+			{x: piece.x + 1, y: piece.y},
+			{x: piece.x + 2, y: piece.y},
+			{x: piece.x + 2, y: piece.y + 1},
+			{x: piece.x + 2, y: piece.y + 2},
+		}
+	} else if piece.rotation == 270 {
+		return []position{
+			{x: piece.x, y: piece.y},
+			{x: piece.x + 1, y: piece.y},
+			{x: piece.x + 2, y: piece.y},
+			{x: piece.x, y: piece.y + 1},
+			{x: piece.x, y: piece.y + 2},
+		}
+	}
+
+	return []position{
+		{x: piece.x, y: piece.y},
+		{x: piece.x, y: piece.y + 1},
+		{x: piece.x, y: piece.y + 2},
+		{x: piece.x + 1, y: piece.y + 2},
+		{x: piece.x + 2, y: piece.y + 2},
+	}
+}
+
+func (piece *boardPiece) getIPieceAtomsPositions() []position {
+	if piece.rotation == 90 || piece.rotation == 270 {
+		return []position{
+			{x: piece.x, y: piece.y + 2},
+			{x: piece.x + 1, y: piece.y + 2},
+			{x: piece.x + 2, y: piece.y + 2},
+		}
+	}
+
+	return []position{
+		{x: piece.x, y: piece.y},
+		{x: piece.x, y: piece.y + 1},
+		{x: piece.x, y: piece.y + 2},
+	}
+}
+
+func (piece *boardPiece) getSPieceAtomsPositions() []position {
+	return []position{
+		{x: piece.x, y: piece.y},
+		{x: piece.x, y: piece.y + 1},
+		{x: piece.x + 1, y: piece.y},
+		{x: piece.x + 1, y: piece.y + 1},
+	}
+}
+
+func (piece *boardPiece) getDotPieceAtomsPositions() []position {
+	return []position{
+		{x: piece.x, y: piece.y},
+	}
 }
 
 func GenerateRandomFallingPiece() boardPiece {
