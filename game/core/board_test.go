@@ -96,11 +96,11 @@ func TestThatFallingPieceGoesOnlyTilTheGround(t *testing.T) {
 	assert.True(t, board.fields[26][27])
 }
 
-func TestThatFallingPieceGoesTilTheGroundAfterBeenRotated(t *testing.T) {
+func TestThatFallingLPieceGoesTilTheGroundAfterBeenRotated(t *testing.T) {
 	board := NewBoard(pieceL)
 	steps := 30
 	piece := board.GetFallingPiece()
-	piece.rotate(&board)
+	piece.Rotate(&board)
 	for i := 0; i <= steps; i++ {
 		board.Tick()
 	}
@@ -110,6 +110,42 @@ func TestThatFallingPieceGoesTilTheGroundAfterBeenRotated(t *testing.T) {
 	assert.True(t, board.fields[26][27])
 	assert.True(t, board.fields[26][25])
 	assert.True(t, board.fields[26][26])
+}
+
+func TestThatFallingTPieceGoesTilTheGroundAfterBeenRotated(t *testing.T) {
+	board := NewBoard(pieceT)
+	steps := 30
+	piece := board.GetFallingPiece()
+	piece.Rotate(&board)
+	piece.Rotate(&board)
+	for i := 0; i <= steps; i++ {
+		board.Tick()
+	}
+
+	positions := piece.GetPieceAtomsPositions()
+
+	for i := 0; i < len(positions); i++ {
+		p := positions[i]
+		assert.True(t, board.fields[p.x][p.y])
+	}
+}
+
+func TestThatFallingIPieceGoesTilTheGroundAfterBeenRotated(t *testing.T) {
+	board := NewBoard(pieceI)
+	steps := 30
+	piece := board.GetFallingPiece()
+	piece.Rotate(&board)
+
+	for i := 0; i <= steps; i++ {
+		board.Tick()
+	}
+
+	positions := piece.GetPieceAtomsPositions()
+
+	for i := 0; i < len(positions); i++ {
+		p := positions[i]
+		assert.True(t, board.fields[p.x][p.y])
+	}
 }
 
 func TestThatTPiecePlacementInBoard(t *testing.T) {

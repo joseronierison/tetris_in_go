@@ -20,27 +20,36 @@ type boardPiece struct {
 	isFalling bool
 }
 
-func (piece *boardPiece) moveLeft(board *board) {
-	if piece.x < 1 {
-		return
+func (piece *boardPiece) MoveLeft(board *board) (int, error) {
+	prospectedPiece := *piece
+	prospectedPiece.x--
+
+	if piece.x < 1 || board.IsFieldOccupied(*piece, prospectedPiece) {
+		return piece.x, errors.New("is impossible to move left from this position")
 	}
 
 	board.remove(*piece)
 	piece.x--
 	board.place(*piece)
+	return piece.x, nil
 }
 
-func (piece *boardPiece) moveRight(board *board) {
-	if piece.x > 48-piece.width {
-		return
+func (piece *boardPiece) MoveRight(board *board) (int, error) {
+	prospectedPiece := *piece
+	prospectedPiece.x++
+
+	if piece.x > 48-piece.width || board.IsFieldOccupied(*piece, prospectedPiece) {
+		return piece.x, errors.New("is impossible to move right from this position")
 	}
 
 	board.remove(*piece)
 	piece.x++
 	board.place(*piece)
+
+	return piece.x, nil
 }
 
-func (piece *boardPiece) rotate(board *board) (int, error) {
+func (piece *boardPiece) Rotate(board *board) (int, error) {
 	if !piece.isFalling {
 		return piece.rotation, errors.New("cannot rotate a stopped piece")
 	}
@@ -52,10 +61,7 @@ func (piece *boardPiece) rotate(board *board) (int, error) {
 	prospectedPiece := *piece
 	prospectedPiece.rotation = piece.nextRotation()
 
-	intermediateBoard := *board
-	intermediateBoard.remove(*piece)
-
-	if intermediateBoard.isFieldOccupied(prospectedPiece.GetPieceAtomsPositions()) {
+	if board.IsFieldOccupied(*piece, prospectedPiece) {
 		return piece.rotation, errors.New("is impossible to rotate in this position")
 	}
 
@@ -109,17 +115,17 @@ func (piece *boardPiece) getTPieceAtomsPositions() []position {
 		}
 	} else if piece.rotation == 180 {
 		return []position{
-			{x: piece.x, y: piece.y + 2},
-			{x: piece.x + 1, y: piece.y + 2},
+			{x: piece.x, y: piece.y + 1},
 			{x: piece.x + 1, y: piece.y + 1},
-			{x: piece.x + 2, y: piece.y + 2},
+			{x: piece.x + 1, y: piece.y},
+			{x: piece.x + 2, y: piece.y + 1},
 		}
 	} else if piece.rotation == 270 {
 		return []position{
-			{x: piece.x + 2, y: piece.y},
-			{x: piece.x + 2, y: piece.y + 1},
+			{x: piece.x + 1, y: piece.y},
 			{x: piece.x + 1, y: piece.y + 1},
-			{x: piece.x + 2, y: piece.y + 2},
+			{x: piece.x, y: piece.y + 1},
+			{x: piece.x + 1, y: piece.y + 2},
 		}
 	}
 
@@ -170,9 +176,9 @@ func (piece *boardPiece) getLPieceAtomsPositions() []position {
 func (piece *boardPiece) getIPieceAtomsPositions() []position {
 	if piece.rotation == 90 || piece.rotation == 270 {
 		return []position{
-			{x: piece.x, y: piece.y + 2},
-			{x: piece.x + 1, y: piece.y + 2},
-			{x: piece.x + 2, y: piece.y + 2},
+			{x: piece.x, y: piece.y},
+			{x: piece.x + 1, y: piece.y},
+			{x: piece.x + 2, y: piece.y},
 		}
 	}
 

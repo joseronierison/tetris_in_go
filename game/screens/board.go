@@ -24,6 +24,12 @@ func InitGameBoard(ss *ScreenState) {
 			case termbox.KeyEsc:
 				ss.Exit()
 				return
+			case termbox.KeyArrowLeft:
+				tetrisBoard.GetFallingPiece().MoveLeft(&tetrisBoard)
+			case termbox.KeyArrowRight:
+				tetrisBoard.GetFallingPiece().MoveRight(&tetrisBoard)
+			case termbox.KeySpace:
+				tetrisBoard.GetFallingPiece().Rotate(&tetrisBoard)
 			}
 		}
 	}
@@ -72,13 +78,12 @@ func drawGameBoard() {
 }
 
 func someThreadTest() {
-	ticker := time.NewTicker(time.Millisecond * 300)
+	ticker := time.NewTicker(time.Millisecond * 200)
 	defer ticker.Stop()
 
 	drawExternalDashboard()
 	drawGameInfoMenu()
 	drawMenuInstructions()
-	//DrawL(60, 5)
 
 	for {
 		drawGameBoard()

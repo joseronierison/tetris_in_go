@@ -26,14 +26,18 @@ func NewBoard(startPiece boardPiece) board {
 }
 
 func (board *board) Tick() {
-	if board.isNextFieldOccupied(board.fallingPiece) {
+	if board.fallingPiece.y >= len(board.fields[0])-board.fallingPiece.height {
 		board.fallingPiece.isFalling = false
 		board.fallingPiece = board.nextPiece
 		board.place(board.fallingPiece)
 		board.nextPiece = GenerateRandomFallingPiece()
+		return
 	}
 
-	if board.fallingPiece.y >= len(board.fields[0])-board.fallingPiece.height {
+	prospectedPiece := board.fallingPiece
+	prospectedPiece.y++
+
+	if board.IsFieldOccupied(board.fallingPiece, prospectedPiece) {
 		board.fallingPiece.isFalling = false
 		board.fallingPiece = board.nextPiece
 		board.place(board.fallingPiece)
@@ -46,21 +50,21 @@ func (board *board) Tick() {
 	board.place(board.fallingPiece)
 }
 
-func (board *board) isFieldOccupied(pieceAtomsPositions []position) bool {
-	for i := 0; i < len(pieceAtomsPositions); i++ {
-		position := pieceAtomsPositions[i]
-		if board.fields[position.x][position.y] {
+func (board *board) IsFieldOccupied(oldPiece, newPiece boardPiece) bool {
+	intermediateBoard := *board
+	intermediateBoard.remove(oldPiece)
+
+	newPos := newPiece.GetPieceAtomsPositions()
+	for i := 0; i < len(newPos); i++ {
+		position := newPos[i]
+
+		if position.y >= 28 {
+			return false
+		}
+
+		if intermediateBoard.fields[position.x][position.y] {
 			return true
 		}
-	}
-
-	return false
-}
-
-func (board *board) isNextFieldOccupied(boardPiece boardPiece) bool {
-	nextColumn := boardPiece.y + boardPiece.height
-	if nextColumn < len(board.fields[0]) {
-		return board.fields[boardPiece.x][nextColumn]
 	}
 
 	return false
