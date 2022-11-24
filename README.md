@@ -5,6 +5,10 @@
 ## Dependencies
 - GoLang 1.9
 ## Running
+```
+$ go mod tidy
+$ go mod download
+```
 `go run .`
 
 ## Testing
