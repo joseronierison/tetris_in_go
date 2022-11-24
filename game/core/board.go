@@ -4,6 +4,7 @@ type board struct {
 	fields       [49][28]bool
 	fallingPiece boardPiece
 	nextPiece    boardPiece
+	score        int
 }
 
 func NewBoard(startPiece boardPiece) board {
@@ -26,18 +27,10 @@ func NewBoard(startPiece boardPiece) board {
 }
 
 func (board *board) Tick() {
-	if board.fallingPiece.y >= len(board.fields[0])-board.fallingPiece.height {
-		board.fallingPiece.isFalling = false
-		board.fallingPiece = board.nextPiece
-		board.place(board.fallingPiece)
-		board.nextPiece = GenerateRandomFallingPiece()
-		return
-	}
-
 	prospectedPiece := board.fallingPiece
 	prospectedPiece.y++
 
-	if board.IsFieldOccupied(board.fallingPiece, prospectedPiece) {
+	if board.hasAVerticalColisionForFallingPiece() {
 		board.fallingPiece.isFalling = false
 		board.fallingPiece = board.nextPiece
 		board.place(board.fallingPiece)
@@ -50,11 +43,18 @@ func (board *board) Tick() {
 	board.place(board.fallingPiece)
 }
 
-func (board *board) IsFieldOccupied(oldPiece, newPiece boardPiece) bool {
-	intermediateBoard := *board
-	intermediateBoard.remove(oldPiece)
+func (board *board) hasAVerticalColisionForFallingPiece() bool {
+	prospectedPiece := board.fallingPiece
+	prospectedPiece.y++
 
-	newPos := newPiece.GetPieceAtomsPositions()
+	return board.IsFieldOccupied(prospectedPiece) || board.fallingPiece.y >= len(board.fields[0])-board.fallingPiece.height
+}
+
+func (board *board) IsFieldOccupied(prospectedPiece boardPiece) bool {
+	intermediateBoard := *board
+	intermediateBoard.remove(board.fallingPiece)
+
+	newPos := prospectedPiece.GetPieceAtomsPositions()
 	for i := 0; i < len(newPos); i++ {
 		position := newPos[i]
 

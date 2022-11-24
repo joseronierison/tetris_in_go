@@ -24,7 +24,7 @@ func (piece *boardPiece) MoveLeft(board *board) (int, error) {
 	prospectedPiece := *piece
 	prospectedPiece.x--
 
-	if piece.x < 1 || board.IsFieldOccupied(*piece, prospectedPiece) {
+	if piece.x < 1 || board.IsFieldOccupied(prospectedPiece) {
 		return piece.x, errors.New("is impossible to move left from this position")
 	}
 
@@ -38,7 +38,7 @@ func (piece *boardPiece) MoveRight(board *board) (int, error) {
 	prospectedPiece := *piece
 	prospectedPiece.x++
 
-	if piece.x > 48-piece.width || board.IsFieldOccupied(*piece, prospectedPiece) {
+	if piece.x > 48-piece.width || board.IsFieldOccupied(prospectedPiece) {
 		return piece.x, errors.New("is impossible to move right from this position")
 	}
 
@@ -61,7 +61,7 @@ func (piece *boardPiece) Rotate(board *board) (int, error) {
 	prospectedPiece := *piece
 	prospectedPiece.rotation = piece.nextRotation()
 
-	if board.IsFieldOccupied(*piece, prospectedPiece) {
+	if board.IsFieldOccupied(prospectedPiece) {
 		return piece.rotation, errors.New("is impossible to rotate in this position")
 	}
 
