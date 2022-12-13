@@ -96,7 +96,7 @@ func drawGameBoard() {
 }
 
 func drawBoardFrames() {
-	ticker := time.NewTicker(time.Millisecond * 20)
+	ticker := time.NewTicker(time.Millisecond * 300)
 	defer ticker.Stop()
 
 	drawExternalDashboard()
