@@ -27,6 +27,10 @@ func NewBoard(startPiece boardPiece) board {
 }
 
 func (board *board) Tick() {
+	if board.IsOver() {
+		return
+	}
+
 	prospectedPiece := board.fallingPiece
 	prospectedPiece.y++
 
@@ -89,6 +93,10 @@ func (board *board) hasAVerticalColisionForFallingPiece() bool {
 
 func (board *board) isPieceOnBoardLimit() bool {
 	return board.fallingPiece.y >= len(board.fields[0])-board.fallingPiece.height
+}
+
+func (board *board) IsOver() bool {
+	return board.hasAVerticalColisionForFallingPiece() && board.fallingPiece.y == 0
 }
 
 func (board *board) computeScore() {

@@ -96,20 +96,24 @@ func drawGameBoard() {
 }
 
 func drawBoardFrames() {
-	ticker := time.NewTicker(time.Millisecond * 300)
+	ticker := time.NewTicker(time.Millisecond * 20)
 	defer ticker.Stop()
 
 	drawExternalDashboard()
 	drawGameInfoMenu()
 	drawMenuInstructions()
-
 	for {
+
 		drawGameBoard()
 
 		drawScore()
 		drawNextPiece()
-
 		tetrisBoard.Tick()
+
+		if tetrisBoard.IsOver() {
+			graphic.DrawRectangle(20, 10, 14, 3, termbox.ColorLightRed)
+			graphic.WriteText(22, 11, termbox.ColorRed, termbox.ColorDefault, "Game Over!")
+		}
 
 		termbox.Flush()
 		<-ticker.C
