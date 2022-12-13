@@ -14,7 +14,7 @@ var tetrisBoard = core.NewBoard(core.GenerateRandomFallingPiece())
 func InitGameBoard(ss *ScreenState) {
 	termbox.Init()
 	termbox.SetInputMode(termbox.InputEsc)
-	go someThreadTest()
+	go drawBoardFrames()
 
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
@@ -48,7 +48,26 @@ func drawGameInfoMenu() {
 
 func drawScore() {
 	graphic.WriteText(55, 3, termbox.ColorWhite, termbox.ColorDefault, "Score:")
-	graphic.WriteText(65, 3, termbox.ColorWhite, termbox.ColorDefault, strconv.Itoa(tetrisBoard.GetScore()))
+	graphic.WriteText(67, 3, termbox.ColorWhite, termbox.ColorDefault, strconv.Itoa(tetrisBoard.GetScore()))
+}
+
+func drawNextPiece() {
+	coordinates := graphic.Coordinates{X: 67, Y: 5}
+	nextPiece := tetrisBoard.GetNexPiece()
+	graphic.EmptyObject.DrawObject(coordinates)
+	graphic.WriteText(55, 5, termbox.ColorWhite, termbox.ColorDefault, "Next Piece:")
+	switch nextPiece.GetPieceType() {
+	case 'L':
+		graphic.LObject.DrawObject(coordinates)
+	case 'I':
+		graphic.IObject.DrawObject(coordinates)
+	case 'S':
+		graphic.SObject.DrawObject(coordinates)
+	case 'T':
+		graphic.TObject.DrawObject(coordinates)
+	case '.':
+		graphic.DotObject.DrawObject(coordinates)
+	}
 }
 
 func drawMenuInstructions() {
@@ -76,8 +95,8 @@ func drawGameBoard() {
 	}
 }
 
-func someThreadTest() {
-	ticker := time.NewTicker(time.Millisecond * 200)
+func drawBoardFrames() {
+	ticker := time.NewTicker(time.Millisecond * 300)
 	defer ticker.Stop()
 
 	drawExternalDashboard()
@@ -88,6 +107,7 @@ func someThreadTest() {
 		drawGameBoard()
 
 		drawScore()
+		drawNextPiece()
 
 		tetrisBoard.Tick()
 

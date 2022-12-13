@@ -86,6 +86,10 @@ func (piece *boardPiece) nextRotation() int {
 	return piece.rotation + 90
 }
 
+func (piece *boardPiece) GetPieceType() rune {
+	return piece.pieceType
+}
+
 func (piece *boardPiece) GetPieceAtomsPositions() []position {
 	var pieceAtomsPositions []position
 

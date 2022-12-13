@@ -5,8 +5,6 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-const edit_box_width = 100
-
 func WriteText(x, y int, fg, bg termbox.Attribute, msg string) {
 	for _, c := range msg {
 		termbox.SetCell(x, y, c, fg, bg)

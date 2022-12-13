@@ -22,6 +22,16 @@ func (obj DrawableObject) width() int {
 	return len(obj.Atoms)
 }
 
+var doa = DrawableAtom{Char: ' ', Fg: termbox.ColorDefault, Bg: termbox.ColorGreen}
+var eao = DrawableAtom{Char: ' ', Fg: termbox.ColorDefault, Bg: termbox.ColorDefault}
+
+var LObject = DrawableObject{Atoms: [][]DrawableAtom{{doa}, {doa}, {doa, doa, doa}}}
+var IObject = DrawableObject{Atoms: [][]DrawableAtom{{doa}, {doa}, {doa}}}
+var TObject = DrawableObject{Atoms: [][]DrawableAtom{{doa, doa, doa}, {eao, doa}}}
+var SObject = DrawableObject{Atoms: [][]DrawableAtom{{doa, doa}, {doa, doa}}}
+var DotObject = DrawableObject{Atoms: [][]DrawableAtom{{doa}}}
+var EmptyObject = DrawableObject{Atoms: [][]DrawableAtom{{eao, eao, eao}, {eao, eao, eao}, {eao, eao, eao}}}
+
 func (obj DrawableObject) DrawObject(coord Coordinates) {
 	for ly := 0; ly < obj.width(); ly++ {
 		for lx := 0; lx < len(obj.Atoms[ly]); lx++ {
