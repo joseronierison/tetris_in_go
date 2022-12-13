@@ -1,4 +1,4 @@
-# Board Data Structure
+# Game frames and control
 
 ## Status
 
