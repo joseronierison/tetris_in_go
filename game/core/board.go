@@ -32,6 +32,7 @@ func (board *board) Tick() {
 
 	if board.hasAVerticalColisionForFallingPiece() {
 		board.fallingPiece.isFalling = false
+		board.computeScore()
 		board.fallingPiece = board.nextPiece
 		board.place(board.fallingPiece)
 		board.nextPiece = GenerateRandomFallingPiece()
@@ -43,11 +44,20 @@ func (board *board) Tick() {
 	board.place(board.fallingPiece)
 }
 
-func (board *board) hasAVerticalColisionForFallingPiece() bool {
-	prospectedPiece := board.fallingPiece
-	prospectedPiece.y++
+func (board *board) GetScore() int {
+	return board.score
+}
 
-	return board.IsFieldOccupied(prospectedPiece) || board.fallingPiece.y >= len(board.fields[0])-board.fallingPiece.height
+func (board *board) GetFallingPiece() *boardPiece {
+	return &board.fallingPiece
+}
+
+func (board *board) GetNexPiece() *boardPiece {
+	return &board.nextPiece
+}
+
+func (board *board) GetFields() [49][28]bool {
+	return board.fields
 }
 
 func (board *board) IsFieldOccupied(prospectedPiece boardPiece) bool {
@@ -70,6 +80,70 @@ func (board *board) IsFieldOccupied(prospectedPiece boardPiece) bool {
 	return false
 }
 
+func (board *board) hasAVerticalColisionForFallingPiece() bool {
+	prospectedPiece := board.fallingPiece
+	prospectedPiece.y++
+
+	return board.IsFieldOccupied(prospectedPiece) || board.isPieceOnBoardLimit()
+}
+
+func (board *board) isPieceOnBoardLimit() bool {
+	return board.fallingPiece.y >= len(board.fields[0])-board.fallingPiece.height
+}
+
+func (board *board) computeScore() {
+	var lines [28][49]bool = board.getInvertedBoardFields()
+	var cl = 27
+
+	for cl >= 0 {
+		line := lines[cl]
+
+		if isAll(line, true) {
+			board.wipeOutBoardLine(cl)
+			board.score += 10
+			board.rearrange()
+		}
+
+		cl--
+	}
+}
+
+func (board *board) rearrange() {
+	for j := 27; j > 0; j-- {
+		for i := 0; i < 49; i++ {
+			board.fields[i][j] = board.fields[i][j-1]
+		}
+	}
+
+}
+
+func isAll(line [49]bool, status bool) bool {
+	for i := 0; i < 49; i++ {
+		if line[i] != status {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (board *board) getInvertedBoardFields() [28][49]bool {
+	var lines [28][49]bool
+	for i := 0; i < 49; i++ {
+		for j := 0; j < 28; j++ {
+			lines[j][i] = board.fields[i][j]
+		}
+	}
+
+	return lines
+}
+
+func (board *board) wipeOutBoardLine(lineNumber int) {
+	for i := 0; i < 49; i++ {
+		board.fields[i][lineNumber] = false
+	}
+}
+
 func (board *board) remove(boardPiece boardPiece) {
 	board.setStateOnBoard(boardPiece, false)
 }
@@ -85,16 +159,4 @@ func (board *board) setStateOnBoard(boardPiece boardPiece, state bool) {
 		position := positions[i]
 		board.fields[position.x][position.y] = state
 	}
-}
-
-func (board *board) GetFallingPiece() *boardPiece {
-	return &board.fallingPiece
-}
-
-func (board *board) GetNexPiece() *boardPiece {
-	return &board.nextPiece
-}
-
-func (board *board) GetFields() [49][28]bool {
-	return board.fields
 }

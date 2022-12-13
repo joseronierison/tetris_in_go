@@ -10,7 +10,6 @@ import (
 )
 
 var tetrisBoard = core.NewBoard(core.GenerateRandomFallingPiece())
-var score int = 0
 
 func InitGameBoard(ss *ScreenState) {
 	termbox.Init()
@@ -49,7 +48,7 @@ func drawGameInfoMenu() {
 
 func drawScore() {
 	graphic.WriteText(55, 3, termbox.ColorWhite, termbox.ColorDefault, "Score:")
-	graphic.WriteText(65, 3, termbox.ColorWhite, termbox.ColorDefault, strconv.Itoa(score))
+	graphic.WriteText(65, 3, termbox.ColorWhite, termbox.ColorDefault, strconv.Itoa(tetrisBoard.GetScore()))
 }
 
 func drawMenuInstructions() {

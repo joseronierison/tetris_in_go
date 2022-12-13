@@ -171,7 +171,7 @@ func TestFallingPieceShouldStopOnceHitsAnotherPieceVertically(t *testing.T) {
 	board.nextPiece = pieceDot
 	fallingPiece := board.GetFallingPiece()
 
-	for i := 0; i < 49; i++ {
+	for i := 3; i < 49; i++ {
 		for j := 5; j < 28; j++ {
 			board.fields[i][j] = true
 		}
@@ -182,7 +182,7 @@ func TestFallingPieceShouldStopOnceHitsAnotherPieceVertically(t *testing.T) {
 	board.Tick()
 	board.Tick()
 
-	for i := 0; i < 49; i++ {
+	for i := 3; i < 49; i++ {
 		for j := 0; j < 27; j++ {
 			if (i >= 24 && i <= 25 && j >= 3 && j <= 4) || j >= 5 || (i == fallingPiece.x && j == fallingPiece.y) {
 				assert.True(t, board.fields[i][j], fmt.Sprintf("i: %v, j: %v", i, j))
@@ -197,6 +197,83 @@ func TestThatDotPiecePlacementInBoard(t *testing.T) {
 	board := NewBoard(pieceDot)
 
 	assertBoardStateWithADot(t, board.fields, pieceDot.x, pieceDot.y)
+}
+
+func TestOneLineCompletionLogicAndScore(t *testing.T) {
+	board := NewBoard(pieceDot)
+
+	for i := 0; i < 49; i++ {
+		if i != 24 {
+			board.fields[i][27] = true
+		}
+	}
+
+	for i := 0; i < 28; i++ {
+		board.Tick()
+	}
+
+	assert.Equal(t, 10, board.GetScore())
+	for i := 0; i < 49; i++ {
+		assert.False(t, board.fields[i][27])
+	}
+}
+
+func TestThreeLineCompletionLogicAndScore(t *testing.T) {
+	board := NewBoard(pieceI)
+
+	for i := 0; i < 49; i++ {
+		if i != 24 {
+			board.fields[i][25] = true
+			board.fields[i][26] = true
+			board.fields[i][27] = true
+		}
+	}
+
+	for i := 0; i < 28; i++ {
+		board.Tick()
+	}
+
+	assert.Equal(t, 30, board.GetScore())
+	for i := 0; i < 49; i++ {
+		assert.False(t, board.fields[i][25])
+		assert.False(t, board.fields[i][26])
+		assert.False(t, board.fields[i][27])
+	}
+}
+
+func TestThreeLineCompletionAndAboveFieldsMotion(t *testing.T) {
+	board := NewBoard(pieceI)
+
+	for i := 0; i < 49; i++ {
+		if i%2 != 0 {
+			board.fields[i][24] = true
+		}
+
+		if i != 24 {
+			board.fields[i][25] = true
+			board.fields[i][26] = true
+			board.fields[i][27] = true
+		}
+	}
+
+	//printBoardFields(board.fields)
+
+	for i := 0; i < 28; i++ {
+		board.Tick()
+	}
+
+	println("end")
+	//printBoardFields(board.fields)
+
+	assert.Equal(t, 30, board.GetScore())
+	for i := 0; i < 49; i++ {
+		assert.False(t, board.fields[i][25])
+		assert.False(t, board.fields[i][26])
+
+		if i%2 != 0 {
+			assert.True(t, board.fields[i][27])
+		}
+	}
 }
 
 func assertBoardStateWithAnL(t *testing.T, fields [49][28]bool, x, y int) {
