@@ -8,7 +8,7 @@ This version was accepted for the first version 0.0.0
 
 There is a need for a representation of a board that enables both to draw the board and compute it physics.
 
-It should be easy to draw it since it will happens in each game frame (tick) and easy to compute the game rules.
+It should be easier to draw since it will happens in each game frame (tick) and easy to compute the game rules.
 
 ## Decision
 
@@ -25,7 +25,7 @@ That is a example, where 0 represents a false and 1 represents true.
 
 ## Consequences
 
-However it was really easy to draw the gameboard, compute the game rules required a step more since the data structure is a columns of lines instead of lines of columns.
+However it was really easy to draw the gameboard, compute the game rules required a step more since the data structure is a columns of lines instead of lines of columns. Currently the code is reversing it to compute game rules.
 
 ```
 the array goes
@@ -34,7 +34,7 @@ this direction
 ---------                                ---------
 000000000            it should be       [000000000]
 000001000            better this was    [000001000]
-000001000                               [000001000] < the would go this direction
+000001000                               [000001000] < the array goes this direction
 000001110                               [000001110]
 000000000                               [000000000]
 ---------                                ---------
