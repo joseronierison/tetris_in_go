@@ -71,13 +71,11 @@ func drawNextPiece() {
 }
 
 func drawMenuInstructions() {
-	baseY := 23
+	baseY := 25
 	graphic.WriteText(52, baseY, termbox.ColorWhite, termbox.ColorDefault, "← or → to move")
 	graphic.WriteText(52, baseY+1, termbox.ColorWhite, termbox.ColorDefault, "↓ to acelerate")
-	graphic.WriteText(52, baseY+4, termbox.ColorWhite, termbox.ColorDefault, "Espace to rotate")
-	graphic.WriteText(52, baseY+2, termbox.ColorWhite, termbox.ColorDefault, "p to pause")
-	graphic.WriteText(52, baseY+3, termbox.ColorWhite, termbox.ColorDefault, "r to resume")
-	graphic.WriteText(52, baseY+5, termbox.ColorWhite, termbox.ColorDefault, "ESC to quit")
+	graphic.WriteText(52, baseY+2, termbox.ColorWhite, termbox.ColorDefault, "Espace to rotate")
+	graphic.WriteText(52, baseY+3, termbox.ColorWhite, termbox.ColorDefault, "ESC to quit")
 }
 
 func drawGameBoard() {
